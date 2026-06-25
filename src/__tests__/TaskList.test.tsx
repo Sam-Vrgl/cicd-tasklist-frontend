@@ -38,6 +38,36 @@ describe('TaskList', () => {
 		expect(screen.getByText('Chargement des tâches...')).toBeInTheDocument();
 	});
 
+	it('shows error state', () => {
+		render(
+			<TaskList
+				tasks={[]}
+				loading={false}
+				error="Erreur réseau"
+				onToggle={vi.fn()}
+				onDelete={vi.fn()}
+				onEdit={vi.fn()}
+			/>
+		);
+		expect(screen.getByTestId('error')).toBeInTheDocument();
+		expect(screen.getByText('Erreur : Erreur réseau')).toBeInTheDocument();
+	});
+
+	it('shows empty state', () => {
+		render(
+			<TaskList
+				tasks={[]}
+				loading={false}
+				error={null}
+				onToggle={vi.fn()}
+				onDelete={vi.fn()}
+				onEdit={vi.fn()}
+			/>
+		);
+		expect(screen.getByTestId('empty')).toBeInTheDocument();
+		expect(screen.getByText('Aucune tâche')).toBeInTheDocument();
+	});
+
 	it('renders list of tasks', () => {
 		render(
 			<TaskList
@@ -55,5 +85,49 @@ describe('TaskList', () => {
 		expect(screen.getByText('2 tâches')).toBeInTheDocument();
 	});
 
-	// ... TODO: Add more tests
+	it('shows singular "tâche" for one task', () => {
+		render(
+			<TaskList
+				tasks={[mockTasks[0]]}
+				loading={false}
+				error={null}
+				onToggle={vi.fn()}
+				onDelete={vi.fn()}
+				onEdit={vi.fn()}
+			/>
+		);
+		expect(screen.getByText('1 tâche')).toBeInTheDocument();
+	});
+
+	it('shows plural "terminées" for multiple completed tasks', () => {
+		const twoCompleted: Task[] = [
+			{ ...mockTasks[0], completed: true },
+			{ ...mockTasks[1], completed: true },
+		];
+		render(
+			<TaskList
+				tasks={twoCompleted}
+				loading={false}
+				error={null}
+				onToggle={vi.fn()}
+				onDelete={vi.fn()}
+				onEdit={vi.fn()}
+			/>
+		);
+		expect(screen.getByText('2 terminées')).toBeInTheDocument();
+	});
+
+	it('shows singular "terminée" for one completed task', () => {
+		render(
+			<TaskList
+				tasks={mockTasks}
+				loading={false}
+				error={null}
+				onToggle={vi.fn()}
+				onDelete={vi.fn()}
+				onEdit={vi.fn()}
+			/>
+		);
+		expect(screen.getByText('1 terminée')).toBeInTheDocument();
+	});
 });
